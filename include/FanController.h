@@ -10,10 +10,29 @@
 const int minFanAnalogVal = 10;
 const int maxFanAnalogVal = 100;
 
+struct TemperatureRange {
+        signed char minTemperature;
+        signed char maxTemperature;
+    
+        TemperatureRange(signed char minTemperature, signed char maxTemperature) : 
+        minTemperature(minTemperature),
+        maxTemperature(maxTemperature) {}
+
+        String toJson() {
+            return (String) "{ \"minTemperature\" : " + minTemperature + ", \"maxTemperature\" : " + maxTemperature + " }";
+        }
+};
+
 class FanController {
+    private:
+        signed char _power;
+        TemperatureRange _range = TemperatureRange(18, 30);
+
     public:
         FanController();
-        void setPower(signed char power);
+        void setPowerByTemperature(float temperature);
+        void setTemperatureRange(TemperatureRange range);
+        TemperatureRange getTemperatureRange();
 };
 
 #endif

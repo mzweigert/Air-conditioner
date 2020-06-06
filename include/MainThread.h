@@ -5,13 +5,22 @@
 #include "Thread.h"
 #include "FanController.h"
 #include "TemperatureSensor.h"
+#include "WebSocketsServerRunner.h"
+#include "WebServer.h"
+#include "ThreadController.h"
+#include "Definitions.h"
 
 class MainThread : public Thread {
  private:
+    ThreadController _threads = ThreadController();
+    WebSocketsServerRunner* _webSocketsServerRunner;
+    WebServer* _webServer;
     FanController *_fanController;
     TemperatureSensor *_temperatureSensor;
-   
-    void onLoop();
+
+    void refreshServers();
+    void refreshFanPower();
+    void initWiFiConnection();
  public:
   MainThread();
 };
