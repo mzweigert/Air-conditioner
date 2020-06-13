@@ -2,7 +2,13 @@
 
 void WebSocketsServerRunner::notifyClient(uint8_t clientNumber) {
   float temperature = _temperatureSensor->readTemperature();
-  bool sent = WebSocketsServer::sendTXT(clientNumber, (String) "{ \"temperature\" : " + temperature + " }");
+  String msg;
+  if (temperature != temperature) {
+    msg = (String) "{ \"temperature\" : \"couldn't read\" }";
+  } else {
+    msg = (String) "{ \"temperature\" : " + temperature + " }";
+  }
+  bool sent = WebSocketsServer::sendTXT(clientNumber, msg);
   if (sent) {
     Serial.println((String) "Consumer ran : " + clientNumber);
   } else {

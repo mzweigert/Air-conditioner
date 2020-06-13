@@ -16,18 +16,20 @@ void WebServer::initEndpoints() {
     _server->send(200, "application/json", json);
   });
 
-  _server->on("/updateCurrentTemperatureRange", HTTP_PUT, [&]() {
+   _server->on("/updateTemperatureRange", HTTP_POST, [&]() {
     StaticJsonDocument<200> doc;
     deserializeJson(doc, _server->arg("plain"));
-    signed char minTemp = doc["minimumTemperature"];
-    signed char maxTemp = doc["maximumTemperature"];
-    if (minTemp < 20 || maxTemp > 35) {
-      _server->send(200, "application/text", (String) "Temperature range must be between 20 and 35");
-      return;
-    }
-    this->_fanController->setTemperatureRange(TemperatureRange(minTemp, maxTemp));
+    byte minTemperature = doc["minTemperature"];
+    byte maxTemperature = doc["maxTemperature"];
+    if (minTemperature < 20 || maxTemperature > 35) {
+      _server->send(200, "application/text", (String) "Temperature range must be between 18 and 35");
+    } else if(maxTemperature <= minTemperature) {
+       _server->send(200, "application/text", (String) "Max temperature should be greater than minimum.");
+    } else {
+     this->_fanController->setTemperatureRange(TemperatureRange(minTemperature, maxTemperature));
     _server->send(200, "application/text", (String) "Temperature range has been changed.");
-  });
+    }
+   });
 }
 
 WebServer::WebServer(int port, FanController* fanController, TemperatureSensor* temperatureSensor) {
